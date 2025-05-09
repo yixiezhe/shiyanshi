@@ -1,0 +1,163 @@
+/* Global box-sizing for more intuitive layout calculations */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Removed empty html {} rule */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    /* padding: 0; /* Typically, body padding is handled by a main container like .page-container */
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 20px; /* Base font size for large screens */
+}
+
+.page-container {
+    max-width: 95%; /* Good for wide screens, provides side margins */
+    margin: 0 auto; /* Centers the container */
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    min-height: 100vh; /* Ensures footer stays at bottom if content is short */
+    display: flex;
+    flex-direction: column; /* Header, content, footer stack vertically */
+}
+
+.main-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.main-header h1 {
+    color: #0056b3;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin: 0; /* Resets default h1 margin */
+    font-size: 2.5em; /* Relative to body's 20px = 50px */
+}
+
+.content-area {
+    display: flex;
+    flex-grow: 1; /* Allows content area to fill available vertical space */
+    gap: 20px; /* Space between left-sidebar and right-content */
+}
+
+.left-sidebar {
+    flex: 1.5; /* Proportion of space relative to right-content */
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.right-content {
+    flex: 2; /* Proportion of space relative to left-sidebar */
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+/* Shared bottom margin for roster and info sections */
+.roster-section, .info-section {
+    margin-bottom: 10px; /* Reduced margin as per your comment */
+}
+
+/* Remove bottom margin from the last child of these types to avoid double spacing */
+.roster-section:last-child, .info-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Styling for H2 titles within roster sections */
+.roster-section h2 {
+    color: #007bff;
+    border-bottom: 1px solid #007bff;
+    padding-bottom: 5px;
+    margin-top: 0; /* Resets default h2 margin-top */
+    font-size: 1.7em; /* Relative to body's 20px = 30px */
+}
+
+/* --- Font size adjustment for "Current Week Roster" --- */
+#current-week-roster p,
+#current-week-roster strong,
+#current-week-roster span {
+    font-size: 1.5em; /* Relative to body's 20px = 25px, making it prominent */
+}
+
+/* --- Font size for "Next Week Roster" --- */
+#next-week-roster p,
+#next-week-roster strong,
+#next-week-roster span {
+    font-size: 1.25em; /* Relative to body's 20px = 20px, standard size */
+}
+
+
+/* --- Styling for labels (strong) and values (span) in roster sections --- */
+.roster-section strong {
+    color: #000000; /* Label text color */
+    font-weight: normal; /* Overrides default strong bold, if span is used for emphasis */
+}
+
+.roster-section span {
+    color: #0056b3; /* Value text color (duty person/group) */
+    font-weight: bold; /* Emphasizes the value */
+}
+
+
+.datetime-display {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+
+.datetime-display p {
+    margin: 5px 0;
+    color: #495057;
+	font-size: 30px; /* 你期望的字体大小，例如 18px */
+	font-weight: bold;
+}
+
+.info-section h3 {
+    color: #333;
+    border-bottom: 1px solid #007bff;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    margin-top: 0; /* Resets default h3 margin-top */
+    font-size: 1.6em; /* Relative to body's 20px = 30px */
+}
+
+.info-section ul {
+    padding-left: 20px; /* Standard indentation for lists */
+    list-style: disc; /* Standard bullet points */
+    margin-top: 0; /* Resets default ul margin-top */
+}
+
+.roster-section p {
+    margin-bottom: 10px; /* Consistent paragraph spacing */
+}
+
+.info-section p, .info-section li {
+    margin-bottom: 10px; /* Consistent paragraph and list item spacing */
+}
+
+.page-footer {
+    width: 100%;
+    text-align: center;
+    margin-top: 25px; /* Space above the footer */
+    padding-top: 15px; /* Space within the footer, above the text */
+    border-top: 1px solid #eee; /* Separator line */
+}
+
+.footer-note {
+    font-size: 0.9em; /* Relative to body's 20px = 18px, slightly smaller */
+    color: #555;
+    margin: 0; /* Resets default p margin */
+}

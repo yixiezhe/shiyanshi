@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>值日安排表</title>
+    <link rel="stylesheet" href="/shiyanshi/style.css">
+</head>
+<body>
+    <div class="page-container"> <!-- 整体页面容器，方便设置全局字体等 -->
+        <header class="main-header">
+            <h1>实验室值日安排</h1>
+        </header>
+
+        <main class="content-area">
+            <aside class="left-sidebar">
+                <div class="roster-section" id="current-week-roster">
+                    <h2 id="current-week-title">本轮值日</h2>
+                    <p id="current-week-dates"></p>
+                    <p><strong>取快递：</strong> <span id="current-package-person"></span></p>
+                    <p><strong>实验室卫生：</strong> <span id="current-lab-group"></span></p>
+                </div>
+
+                <div class="roster-section" id="next-week-roster" style="display: block;"> <!-- 初始设为block，JS会控制 -->
+                    <h2 id="next-week-title">下轮预报</h2>
+                    <p id="next-week-dates"></p>
+                    <p><strong>取快递：</strong> <span id="next-package-person"></span></p>
+                    <p><strong>实验室卫生：</strong> <span id="next-lab-group"></span></p>
+                </div>
+            </aside>
+
+            <section class="right-content">
+                <div class="datetime-display">
+                    <p id="live-date"></p>
+                    <p id="live-time"></p>
+                </div>
+
+                <div class="info-section">
+                    <h3>值日内容:</h3>
+                    <ul>
+                        <li>每天倒垃圾（大垃圾桶：走廊4个，大实验室3个，108 1个，炉子间1个。小垃圾桶：办公室1个，通风橱共2个）</li>
+                        <li>实验室垃圾放到指定位置的纸箱中，堆积一定数量联系范文轩，进行垃圾回收。生活垃圾自行去垃圾站处理。</li>
+                        <li>清理通风橱；清理未贴标签的瓶子；清理试验台；</li>
+                        <li>补充去离子水、酒精、移液枪头、卫生纸、无尘纸；</li>
+                        <li>每周办公室、走廊、实验室扫地、拖地各一次；</li>
+                        <li>每周更换超声机水1-2次；</li>
+                        <li>晚上离开实验室时检查实验室安全卫生情况。</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p class="footer-note">快递值日生负责取实验室公共用品，个人药品由自己负责。</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
