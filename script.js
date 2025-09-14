@@ -3,36 +3,46 @@ console.log("DEBUG: script.js file is starting to load.");
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DEBUG: DOMContentLoaded event fired.");
 
-    // --- 数据定义 (保持不变) ---
+    // --- 新的数据库定义 ---
+    // 快递值日人员名单 (共18人)
     const packageDutyList = [
-        "艾玄叶", "杜玉霖", "陆朝钰", "李佳城", "柳婷", "王丹瑶",
-        "徐靖卓", "周红越", "朱迅", "陈卓", "黄天润", "李明杰",
-        "马乾乾", "李林阳", "马畅", "齐子欣", "苏万凯", "孙肇骏"
+        "王嘉豪", "肖杰伦", "袁野", "李胜涛", "王欣婷", "谢涛",
+        "陈加洛", "姚俊", "何霜", "林杨锋", "纪星明", "宋天赐",
+        "杨云昊", "吴鹏飞", "王奇", "闫志创", "赵国祥", "李先基"
     ];
 
+    // 实验室卫生分组 (包含研二指导)
     const labDutyGroups = [
-        { group: "第一组", members: ["李明杰", "王丹瑶"] },
-        { group: "第二组", members: ["马畅", "徐靖卓"] },
-        { group: "第三组", members: ["马乾乾", "朱迅"] },
-        { group: "第四组", members: ["陈卓", "陆朝钰"] },
-        { group: "第五组", members: ["苏万凯", "周红越"] },
-        { group: "第六组", members: ["孙肇骏", "艾玄叶"] },
-        { group: "第七组", members: ["黄天润", "柳婷"] },
-        { group: "第八组", members: ["李林阳", "杜玉霖"] },
-        { group: "第九组", members: ["齐子欣", "李佳城"] }
+        { group: "第一组", members: ["王嘉豪", "林杨锋"], supervisor: "柳婷" },
+        { group: "第二组", members: ["肖杰伦", "纪星明"], supervisor: "李佳城" },
+        { group: "第三组", members: ["袁野", "宋天赐"], supervisor: "徐靖卓" },
+        { group: "第四组", members: ["李胜涛", "杨云昊"], supervisor: "杜玉霖" },
+        { group: "第五组", members: ["王欣婷", "吴鹏飞"], supervisor: "朱迅" },
+        { group: "第六组", members: ["谢涛", "王奇"], supervisor: "陆朝钰" },
+        { group: "第七组", members: ["陈加洛", "闫志创"], supervisor: "王丹瑶" },
+        { group: "第八组", members: ["姚俊", "赵国祥"], supervisor: "李佳城" }, // 注意：李佳城指导两组
+        { group: "第九组", members: ["何霜", "李先基"], supervisor: "艾玄叶" }
     ];
 
-    // --- 基准信息 (保持不变) ---
-    const SEMESTER_WEEK1_MONDAY = new Date(2025, 1, 17); // 月份是0-indexed, 1 = Feb
+    // --- 新的基准信息 ---
+    // 基准日期：新的第一周从2025年9月16日(周二)开始，因此我们以那一周的周一(9月15日)为计算基点。
+    const SEMESTER_WEEK1_MONDAY = new Date(2025, 8, 15); // 月份是0-indexed, 8 = Sep
     console.log("DEBUG: SEMESTER_WEEK1_MONDAY set to:", SEMESTER_WEEK1_MONDAY);
 
 
-    // --- 辅助函数 (保持不变) ---
+    // --- 辅助函数 ---
     function getMonday(date) {
         const d = new Date(date);
+        // 如果今天是周一且时间在晚上8点之前，我们仍然认为“当前周”是上一周的值日安排。
+        // 为了计算方便，我们将日期倒退一天，这样 getMonday 就会返回上一个周一。
+        if (d.getDay() === 1 && d.getHours() < 20) {
+            d.setDate(d.getDate() - 1);
+        }
         const day = d.getDay();
         const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-        return new Date(d.setDate(diff));
+        const monday = new Date(d.setDate(diff));
+        monday.setHours(0, 0, 0, 0); // 标准化到周一的零点
+        return monday;
     }
 
     function formatDate(date) {
@@ -43,12 +53,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentMonday = getMonday(new Date(targetDate));
         const oneDay = 24 * 60 * 60 * 1000;
         const weekNumber = Math.floor((currentMonday - SEMESTER_WEEK1_MONDAY) / (7 * oneDay)) + 1;
+
+        // 新的周期：周二到下周一
         const weekStartDate = new Date(currentMonday);
+        weekStartDate.setDate(currentMonday.getDate() + 1); // 周二
+
         const weekEndDate = new Date(currentMonday);
-        weekEndDate.setDate(currentMonday.getDate() + 6);
+        weekEndDate.setDate(currentMonday.getDate() + 7); // 下周一
+
         return {
             semesterWeek: weekNumber,
-            displaySemesterWeek: weekNumber, // 用于显示的学期周数
+            displaySemesterWeek: weekNumber,
             startDate: weekStartDate,
             endDate: weekEndDate,
             displayDates: `${formatDate(weekStartDate)} - ${formatDate(weekEndDate)}`
@@ -56,13 +71,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getDutyPersonnel(semesterWeek) {
+        // 取快递人员计算
         const packageIndex = (semesterWeek - 1 + packageDutyList.length) % packageDutyList.length;
-        const labGroupIndex = (semesterWeek - 1 + labDutyGroups.length) % labDutyGroups.length;
         const packagePerson = packageDutyList[packageIndex];
-        const labGroup = labDutyGroups[labGroupIndex];
+
+        // 实验室卫生分组计算
+        const labGroupIndex = (semesterWeek - 1 + labDutyGroups.length) % labDutyGroups.length;
+        const labGroupData = labDutyGroups[labGroupIndex];
+        let labGroupText = `${labGroupData.group} (${labGroupData.members.join("、")})`;
+
+        // 判断是否需要显示指导老师 (仅在第一轮，即前9周显示)
+        if (semesterWeek <= labDutyGroups.length) {
+            labGroupText += `，指导: ${labGroupData.supervisor}`;
+        }
+
         return {
             packagePerson: packagePerson,
-            labGroupText: `${labGroup.group} (${labGroup.members.join("、")})`
+            labGroupText: labGroupText
         };
     }
 
@@ -70,8 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateRoster() {
         console.log("DEBUG: updateRoster function CALLED.");
         const today = new Date();
-        // 测试用：
-        // const today = new Date(2025, 4, 5); // 2025年5月5日 (周一，第12周开始)
         console.log("DEBUG: Current date for roster in updateRoster:", today);
 
         // 本周信息
@@ -80,58 +103,32 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentDuty = getDutyPersonnel(currentWeekData.semesterWeek);
         console.log("DEBUG: currentDuty for roster:", currentDuty);
 
-        const currentWeekTitleEl = document.getElementById('current-week-title');
-        const currentWeekDatesEl = document.getElementById('current-week-dates');
-        const currentPackagePersonEl = document.getElementById('current-package-person');
-        const currentLabGroupEl = document.getElementById('current-lab-group');
-
-        // 修改标题以包含周数
-        if(currentWeekTitleEl) currentWeekTitleEl.textContent = `本周值日 (第 ${currentWeekData.displaySemesterWeek} 周)`;
-        if(currentWeekDatesEl) currentWeekDatesEl.textContent = currentWeekData.displayDates;
-        if(currentPackagePersonEl) currentPackagePersonEl.textContent = currentDuty.packagePerson;
-        if(currentLabGroupEl) currentLabGroupEl.textContent = currentDuty.labGroupText;
+        document.getElementById('current-week-title').textContent = `本周值日 (第 ${currentWeekData.displaySemesterWeek} 周)`;
+        document.getElementById('current-week-dates').textContent = currentWeekData.displayDates;
+        document.getElementById('current-package-person').textContent = currentDuty.packagePerson;
+        document.getElementById('current-lab-group').textContent = currentDuty.labGroupText;
 
         // 下周预报
-        const nextWeekRosterEl = document.getElementById('next-week-roster');
-        // 预报逻辑可以根据需要调整，例如周四开始显示，或者一直显示
-        // if (today.getDay() >= 4 || today.getDay() === 0) {
-        if (true) { // 暂时一直显示下周预报
-            console.log("DEBUG: Displaying next week roster.");
-            const nextWeekStartDateForCalc = new Date(currentWeekData.startDate);
-            nextWeekStartDateForCalc.setDate(nextWeekStartDateForCalc.getDate() + 7); // 下周一的日期
+        const nextWeekStartDateForCalc = new Date(currentWeekData.startDate);
+        nextWeekStartDateForCalc.setDate(nextWeekStartDateForCalc.getDate() + 7); // 基于本周二，推算7天后就是下周二
 
-            const nextWeekData = getWeekInfo(nextWeekStartDateForCalc);
-            console.log("DEBUG: nextWeekData for roster:", nextWeekData);
-            const nextDuty = getDutyPersonnel(nextWeekData.semesterWeek);
-            console.log("DEBUG: nextDuty for roster:", nextDuty);
+        const nextWeekData = getWeekInfo(nextWeekStartDateForCalc);
+        console.log("DEBUG: nextWeekData for roster:", nextWeekData);
+        const nextDuty = getDutyPersonnel(nextWeekData.semesterWeek);
+        console.log("DEBUG: nextDuty for roster:", nextDuty);
 
-            const nextWeekTitleEl = document.getElementById('next-week-title');
-            const nextWeekDatesEl = document.getElementById('next-week-dates');
-            const nextPackagePersonEl = document.getElementById('next-package-person');
-            const nextLabGroupEl = document.getElementById('next-lab-group');
+        document.getElementById('next-week-title').textContent = `下周预报 (第 ${nextWeekData.displaySemesterWeek} 周)`;
+        
+        // 计算并显示下一次准确的更新时间
+        const thisWeekMonday = getMonday(new Date(today));
+        const nextUpdateMonday = new Date(thisWeekMonday);
+        nextUpdateMonday.setDate(thisWeekMonday.getDate() + 7);
+        document.getElementById('next-week-dates').textContent = `下次更新于: ${formatDate(nextUpdateMonday)} 20:00`;
 
-            // 修改标题以包含周数
-            if(nextWeekTitleEl) nextWeekTitleEl.textContent = `下周预报 (第 ${nextWeekData.displaySemesterWeek} 周)`;
-            
-            // 显示下周的日期范围，或者更新时间的提示
-            // if(nextWeekDatesEl) nextWeekDatesEl.textContent = nextWeekData.displayDates; // 显示下周日期范围
-            // 或者显示更新时间的提示
-            if(nextWeekDatesEl) {
-                let nextUpdateTime = new Date(currentWeekData.startDate); // 基于本周一开始计算
-                nextUpdateTime.setDate(nextUpdateTime.getDate() + 7); // 到下周一
-                nextUpdateTime.setHours(8, 0, 0, 0); // 早上8点
-                nextWeekDatesEl.textContent = `下次更新于: ${formatDate(nextUpdateTime)} 08:00`;
-            }
-
-
-            if(nextPackagePersonEl) nextPackagePersonEl.textContent = nextDuty.packagePerson;
-            if(nextLabGroupEl) nextLabGroupEl.textContent = nextDuty.labGroupText;
-            
-            if(nextWeekRosterEl) nextWeekRosterEl.style.display = 'block';
-        } else {
-            console.log("DEBUG: Hiding next week roster.");
-            if(nextWeekRosterEl) nextWeekRosterEl.style.display = 'none';
-        }
+        document.getElementById('next-package-person').textContent = nextDuty.packagePerson;
+        document.getElementById('next-lab-group').textContent = nextDuty.labGroupText;
+        
+        document.getElementById('next-week-roster').style.display = 'block'; // 保持一直显示
         console.log("DEBUG: updateRoster function FINISHED.");
     }
 
@@ -148,13 +145,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const seconds = now.getSeconds().toString().padStart(2, '0');
         const dateString = `${year}年${month}月${day}日 ${weekDay}`;
         const timeString = `${hours}:${minutes}:${seconds}`;
-        const liveDateEl = document.getElementById('live-date');
-        const liveTimeEl = document.getElementById('live-time');
-        if(liveDateEl) liveDateEl.textContent = dateString;
-        if(liveTimeEl) liveTimeEl.textContent = timeString;
+        document.getElementById('live-date').textContent = dateString;
+        document.getElementById('live-time').textContent = timeString;
     }
 
-    // --- 初始化与定时器设置 (保持不变) ---
+    // --- 初始化与定时器设置 (更新了调度逻辑) ---
     function initializeAndScheduleUpdates() {
         console.log("DEBUG: Initializing and scheduling updates.");
         updateLiveDateTime();
@@ -163,18 +158,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function scheduleWeeklyRosterUpdate() {
             const now = new Date();
-            let nextMonday8AM = new Date(now);
-            nextMonday8AM.setDate(now.getDate() + (1 - now.getDay() + 7) % 7);
-            if (now.getDay() === 1 && now.getHours() >= 8) {
-                nextMonday8AM.setDate(nextMonday8AM.getDate() + 7);
-            }
-            nextMonday8AM.setHours(8, 0, 0, 0);
-            const timeUntilNextUpdate = nextMonday8AM.getTime() - now.getTime();
-            console.log(`DEBUG: Next weekly roster update scheduled for: ${nextMonday8AM}. Milliseconds until update: ${timeUntilNextUpdate}`);
+            let nextMonday8PM = getMonday(now); // 获取当前值日周期的周一
+            
+            // 计算下一次更新的周一
+            nextMonday8PM.setDate(nextMonday8PM.getDate() + 7);
+            nextMonday8PM.setHours(20, 0, 0, 0); // 设置为晚上8点
+
+            const timeUntilNextUpdate = nextMonday8PM.getTime() - now.getTime();
+            console.log(`DEBUG: Next weekly roster update scheduled for: ${nextMonday8PM}. Milliseconds until update: ${timeUntilNextUpdate}`);
+
             if (timeUntilNextUpdate > 0) {
                 setTimeout(() => {
                     console.log("DEBUG: Weekly update time reached. Updating roster now...");
                     updateRoster();
+                    // 递归调用，设置下一次的更新
                     scheduleWeeklyRosterUpdate();
                 }, timeUntilNextUpdate);
             } else {
@@ -182,6 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(scheduleWeeklyRosterUpdate, 60 * 1000);
             }
         }
+
         scheduleWeeklyRosterUpdate();
         console.log("DEBUG: Initialization and scheduling FINISHED.");
     }
