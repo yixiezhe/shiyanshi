@@ -4,14 +4,14 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DEBUG: DOMContentLoaded event fired.");
 
     // --- 新的数据库定义 ---
-    // 快递值日人员名单 (共18人)
+    // 快递值日人员名单 (已按您的最新图片更新顺序)
     const packageDutyList = [
-        "王嘉豪", "肖杰伦", "袁野", "李胜涛", "王欣婷", "谢涛",
-        "陈加洛", "姚俊", "何霜", "林杨锋", "纪星明", "宋天赐",
-        "杨云昊", "吴鹏飞", "王奇", "闫志创", "赵国祥", "李先基"
+        "王奇", "闫志创", "赵国祥", "李先基", "王嘉豪", "肖杰伦",
+        "袁野", "李胜涛", "王欣婷", "谢涛", "陈加洛", "姚俊",
+        "何霜", "林杨锋", "纪星明", "宋天赐", "杨云昊", "吴鹏飞"
     ];
 
-    // 实验室卫生分组 (包含研二指导)
+    // 实验室卫生分组 (保持不变)
     const labDutyGroups = [
         { group: "第一组", members: ["王嘉豪", "林杨锋"], supervisor: "柳婷" },
         { group: "第二组", members: ["肖杰伦", "纪星明"], supervisor: "李佳城" },
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { group: "第五组", members: ["王欣婷", "吴鹏飞"], supervisor: "朱迅" },
         { group: "第六组", members: ["谢涛", "王奇"], supervisor: "陆朝钰" },
         { group: "第七组", members: ["陈加洛", "闫志创"], supervisor: "王丹瑶" },
-        { group: "第八组", members: ["姚俊", "赵国祥"], supervisor: "李佳城" }, // 注意：李佳城指导两组
+        { group: "第八组", members: ["姚俊", "赵国祥"], supervisor: "李佳城" },
         { group: "第九组", members: ["何霜", "李先基"], supervisor: "艾玄叶" }
     ];
 
