@@ -4,24 +4,24 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DEBUG: DOMContentLoaded event fired.");
 
     // --- 新的数据库定义 ---
-    // 快递值日人员名单 (已按您的最新图片更新顺序)
+    // 快递值日人员名单 (保持不变)
     const packageDutyList = [
         "王奇", "闫志创", "赵国祥", "李先基", "王嘉豪", "肖杰伦",
         "袁野", "李胜涛", "王欣婷", "谢涛", "陈加洛", "姚俊",
         "何霜", "林杨锋", "纪星明", "宋天赐", "杨云昊", "吴鹏飞"
     ];
 
-    // 实验室卫生分组 (保持不变)
+    // 实验室卫生分组 (已修改：指导老师并入名单，第七组删除闫志创)
     const labDutyGroups = [
-        { group: "第一组", members: ["王嘉豪", "林杨锋"], supervisor: "柳婷" },
-        { group: "第二组", members: ["肖杰伦", "纪星明"], supervisor: "李佳城" },
-        { group: "第三组", members: ["袁野", "宋天赐"], supervisor: "徐靖卓" },
-        { group: "第四组", members: ["李胜涛", "杨云昊"], supervisor: "杜玉霖" },
-        { group: "第五组", members: ["王欣婷", "吴鹏飞"], supervisor: "朱迅" },
-        { group: "第六组", members: ["谢涛", "王奇"], supervisor: "陆朝钰" },
-        { group: "第七组", members: ["陈加洛", "闫志创"], supervisor: "王丹瑶" },
-        { group: "第八组", members: ["姚俊", "赵国祥"], supervisor: "李佳城" },
-        { group: "第九组", members: ["何霜", "李先基"], supervisor: "艾玄叶" }
+        { group: "第一组", members: ["王嘉豪", "林杨锋", "柳婷"] },
+        { group: "第二组", members: ["肖杰伦", "纪星明", "李佳城"] },
+        { group: "第三组", members: ["袁野", "宋天赐", "徐靖卓"] },
+        { group: "第四组", members: ["李胜涛", "杨云昊", "杜玉霖"] },
+        { group: "第五组", members: ["王欣婷", "吴鹏飞", "朱迅"] },
+        { group: "第六组", members: ["谢涛", "王奇", "陆朝钰"] },
+        { group: "第七组", members: ["陈加洛", "王丹瑶"] }, // 删除了闫志创，只有两人
+        { group: "第八组", members: ["姚俊", "赵国祥", "李佳城"] },
+        { group: "第九组", members: ["何霜", "李先基", "艾玄叶"] }
     ];
 
     // --- 新的基准信息 ---
@@ -78,12 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 实验室卫生分组计算
         const labGroupIndex = (semesterWeek - 1 + labDutyGroups.length) % labDutyGroups.length;
         const labGroupData = labDutyGroups[labGroupIndex];
-        let labGroupText = `${labGroupData.group} (${labGroupData.members.join("、")})`;
-
-        // 判断是否需要显示指导老师 (仅在第一轮，即前9周显示)
-        if (semesterWeek <= labDutyGroups.length) {
-            labGroupText += `，指导: ${labGroupData.supervisor}`;
-        }
+        
+        // 直接显示组名和所有成员（含原来的指导老师）
+        const labGroupText = `${labGroupData.group} (${labGroupData.members.join("、")})`;
 
         return {
             packagePerson: packagePerson,
@@ -149,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('live-time').textContent = timeString;
     }
 
-    // --- 初始化与定时器设置 (更新了调度逻辑) ---
+    // --- 初始化与定时器设置 (保持不变) ---
     function initializeAndScheduleUpdates() {
         console.log("DEBUG: Initializing and scheduling updates.");
         updateLiveDateTime();
